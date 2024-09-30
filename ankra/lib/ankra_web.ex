@@ -81,6 +81,11 @@ defmodule AnkraWeb do
 
   defp html_helpers do
     quote do
+      import PetalComponents.{
+        Dropdown,
+        Badge
+      }
+
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation

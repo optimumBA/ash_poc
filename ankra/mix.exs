@@ -37,7 +37,7 @@ defmodule Ankra.MixProject do
       {:ash, "~> 3.0"},
       {:ash_authentication, "~> 4.0"},
       {:ash_authentication_phoenix, "~> 2.0"},
-      {:picosat_elixir, "~> 0.2.0"},
+      {:simple_sat, "~> 0.1.3"},
       {:igniter, "~> 0.3"},
       {:phoenix, "~> 1.7.14"},
       {:phoenix_ecto, "~> 4.5"},
@@ -65,7 +65,8 @@ defmodule Ankra.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:petal_components, "~> 2.0"}
     ]
   end
 

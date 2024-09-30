@@ -5,10 +5,9 @@ defmodule AnkraWeb.CustomerLive.Show do
   def render(assigns) do
     ~H"""
     <.header>
-      Customer <%= @customer.id %>
-      <:subtitle>This is a customer record from your database.</:subtitle>
+      <%= @customer.full_name %>
 
-      <:actions>
+      <:actions :if={Ash.can?({@customer, :update}, @current_user)}>
         <.link patch={~p"/customers/#{@customer}/show/edit"} phx-click={JS.push_focus()}>
           <.button>Edit customer</.button>
         </.link>
@@ -16,15 +15,13 @@ defmodule AnkraWeb.CustomerLive.Show do
     </.header>
 
     <.list>
-      <:item title="Id"><%= @customer.id %></:item>
-
       <:item title="Email"><%= @customer.email %></:item>
-
-      <:item title="Name"><%= @customer.full_name %></:item>
 
       <:item title="Phone number"><%= @customer.phone_number %></:item>
 
       <:item title="Role"><%= @customer.role %></:item>
+
+      <:item title="Status"><%= @customer.status |> Atom.to_string() |> String.capitalize() %></:item>
     </.list>
 
     <.back navigate={~p"/"}>Back to customers</.back>
@@ -60,7 +57,10 @@ defmodule AnkraWeb.CustomerLive.Show do
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(
        :customer,
-       Ash.get!(Ankra.Customers.Customer, id, actor: socket.assigns.current_user, load: [:full_name])
+       Ash.get!(Ankra.Customers.Customer, id,
+         actor: socket.assigns.current_user,
+         load: [:full_name]
+       )
      )}
   end
 

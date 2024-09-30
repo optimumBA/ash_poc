@@ -4,13 +4,15 @@ defmodule Ankra.Customers.Customer do
     domain: Ankra.Customers,
     authorizers: [Ash.Policy.Authorizer]
 
+  require Ash.Query
+
   postgres do
     table "customers"
     repo Ankra.Repo
   end
 
   actions do
-    defaults [:read, :destroy, :update]
+    defaults [:destroy, :update]
 
     create :create do
       accept [:email, :first_name, :last_name, :phone_number, :role, :status, :avatar]
@@ -18,16 +20,27 @@ defmodule Ankra.Customers.Customer do
       change relate_actor(:user)
     end
 
-    read :filter_by_status do
-      argument :status, :atom, allow_nil?: false
+    read :read do
+      primary? true
 
-      filter expr(status == ^arg(:status))
-    end
+      argument :filter, :map, allow_nil?: false, default: %{}
 
-    read :filter_by_role do
-      argument :role, :atom, allow_nil?: false
+      prepare fn query, _context ->
+        query
+        |> Ash.Query.get_argument(:filter)
+        |> Enum.reduce(query, fn
+          {:role, role}, query ->
+            Ash.Query.filter(query, expr(role == ^role))
 
-      filter expr(role == ^arg(:role))
+          {:status, status}, query ->
+            Ash.Query.filter(query, expr(status == ^status))
+
+          _other, query ->
+            query
+        end)
+      end
+
+      prepare build(sort: [inserted_at: :desc], load: [:full_name])
     end
   end
 
@@ -70,16 +83,15 @@ defmodule Ankra.Customers.Customer do
     update_timestamp :updated_at
   end
 
-
-  identities do
-    identity :unique_email, [:email]
-  end
-
   relationships do
     belongs_to :user, Ankra.Accounts.User, allow_nil?: false
   end
 
   calculations do
     calculate :full_name, :string, expr(first_name <> " " <> last_name)
+  end
+
+  identities do
+    identity :unique_email, [:email]
   end
 end

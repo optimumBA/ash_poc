@@ -1,6 +1,6 @@
 // See the Tailwind configuration guide for advanced usage
 // https://tailwindcss.com/docs/configuration
-
+const colors = require("tailwindcss/colors")
 const plugin = require("tailwindcss/plugin")
 const fs = require("fs")
 const path = require("path")
@@ -10,12 +10,20 @@ module.exports = {
     "./js/**/*.js",
     "../lib/ankra_web.ex",
     "../lib/ankra_web/**/*.*ex",
-    "../deps/ash_authentication_phoenix/**/*.*ex"
+    "../deps/ash_authentication_phoenix/**/*.*ex",
+    "../deps/petal_components/**/*.*ex"
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        brand: "#FD4F00",
+        primary: colors.blue,
+        secondary: colors.pink,
+        success: colors.green,
+        danger: colors.red,
+        warning: colors.yellow,
+        info: colors.sky,
+        gray: colors.stone,
       }
     },
   },

@@ -25,12 +25,12 @@ defmodule AnkraWeb.Router do
 
     ash_authentication_live_session :authentication_required,
       on_mount: {AnkraWeb.UserAuth, :live_user_required} do
-        live "/", CustomerLive.Index, :index
-        live "/customers/new", CustomerLive.Index, :new
-        live "/customers/:id/edit", CustomerLive.Index, :edit
+      live "/", CustomerLive.Index, :index
+      live "/customers/new", CustomerLive.Index, :new
+      live "/customers/:id/edit", CustomerLive.Index, :edit
 
-        live "/customers/:id", CustomerLive.Show, :show
-        live "/customers/:id/show/edit", CustomerLive.Show, :edit
+      live "/customers/:id", CustomerLive.Show, :show
+      live "/customers/:id/show/edit", CustomerLive.Show, :edit
     end
 
     # Define routes for admin

@@ -7,7 +7,6 @@ defmodule AnkraWeb.CustomerLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage customer records in your database.</:subtitle>
       </.header>
 
       <.simple_form
@@ -17,27 +16,24 @@ defmodule AnkraWeb.CustomerLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <%= if @form.source.type == :create do %>
-          <.input field={@form[:email]} type="text" label="Email" /><.input
-            field={@form[:first_name]}
-            type="text"
-            label="First name"
-          /><.input field={@form[:last_name]} type="text" label="Last name" /><.input
-            field={@form[:phone_number]}
-            type="text"
-            label="Phone number"
-          /><.input field={@form[:role]} type="text" label="Role" /><.input
-            field={@form[:status]}
-            type="select"
-            label="Status"
-            options={
-              Ash.Resource.Info.attribute(Ankra.Customers.Customer, :status).constraints[:one_of]
-            }
-          />
-          <.input field={@form[:avatar]} type="text" label="Avatar" />
-        <% end %>
-        <%= if @form.source.type == :update do %>
-        <% end %>
+        <.input field={@form[:email]} type="text" label="Email" />
+
+        <.input field={@form[:first_name]} type="text" label="First name" />
+
+        <.input field={@form[:last_name]} type="text" label="Last name" />
+
+        <.input field={@form[:phone_number]} type="text" label="Phone number" />
+
+        <.input field={@form[:role]} type="text" label="Role" />
+        <.input
+          field={@form[:status]}
+          type="select"
+          label="Status"
+          options={
+            Ash.Resource.Info.attribute(Ankra.Customers.Customer, :status).constraints[:one_of]
+          }
+        />
+        <.input field={@form[:avatar]} type="text" label="Avatar" />
 
         <:actions>
           <.button phx-disable-with="Saving...">Save Customer</.button>
@@ -69,7 +65,7 @@ defmodule AnkraWeb.CustomerLive.FormComponent do
         socket =
           socket
           |> put_flash(:info, "Customer #{socket.assigns.form.source.type}d successfully")
-          |> push_patch(to: socket.assigns.patch)
+          |> push_navigate(to: socket.assigns.patch)
 
         {:noreply, socket}
 

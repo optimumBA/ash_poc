@@ -9,24 +9,6 @@ defmodule Ankra.Accounts.User do
     repo Ankra.Repo
   end
 
-  attributes do
-    uuid_primary_key :id
-    attribute :email, :ci_string, allow_nil?: false, public?: true
-    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-
-    attribute :role, :atom do
-      constraints one_of: [:admin, :viewer]
-      default :viewer
-    end
-
-    create_timestamp :inserted_at
-    update_timestamp :updated_at
-  end
-
-  identities do
-    identity :unique_email, [:email]
-  end
-
   authentication do
     strategies do
       password :password do
@@ -64,6 +46,24 @@ defmodule Ankra.Accounts.User do
       accept []
       change set_attribute(:role, :admin)
     end
+  end
+
+  attributes do
+    uuid_primary_key :id
+    attribute :email, :ci_string, allow_nil?: false, public?: true
+    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
+
+    attribute :role, :atom do
+      constraints one_of: [:admin, :viewer]
+      default :viewer
+    end
+
+    create_timestamp :inserted_at
+    update_timestamp :updated_at
+  end
+
+  identities do
+    identity :unique_email, [:email]
   end
 end
 
