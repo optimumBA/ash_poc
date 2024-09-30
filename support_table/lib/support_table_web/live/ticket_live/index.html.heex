@@ -1,0 +1,77 @@
+<.header>
+  Listing Tickets
+</.header>
+
+<div class="mb-4">
+  <form phx-change="search" class="flex items-center space-x-2">
+    <input
+      type="text"
+      name="search"
+      value={@search}
+      placeholder="Search by subject"
+      class="form-input"
+    />
+
+    <select name="status" phx-change="filter_status" class="form-select">
+      <option value="">All Statuses</option>
+      <%= for status <- @statuses do %>
+        <option value={status} selected={@status_filter == to_string(status)}>
+          <%= status %>
+        </option>
+      <% end %>
+    </select>
+
+    <select name="representative" phx-change="filter_representative" class="form-select">
+      <option value="">All Representatives</option>
+      <option value="" selected={@representative_filter == ""}>Unassigned</option>
+      <%= for rep <- @representatives do %>
+        <option value={rep.id} selected={@representative_filter == rep.id}>
+          <%= rep.name %>
+        </option>
+      <% end %>
+    </select>
+  </form>
+</div>
+
+<.table id="tickets" rows={@streams.tickets}>
+  <:col :let={{_id, ticket}} label="Subject"><%= ticket.subject %></:col>
+  <:col :let={{_id, ticket}} label="Status"><%= ticket.status %></:col>
+  <:col :let={{_id, ticket}} label="Representative">
+    <%= if ticket.representative, do: ticket.representative.name, else: "Unassigned" %>
+  </:col>
+</.table>
+
+<nav class="flex items-center justify-between pt-4" aria-label="Table navigation">
+  <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+    Showing page <span class="font-semibold text-gray-900 dark:text-white"><%= @page %></span>
+    of <span class="font-semibold text-gray-900 dark:text-white"><%= @total_pages %></span>
+  </span>
+  <ul class="inline-flex -space-x-px text-sm h-8">
+    <li>
+      <.link
+        patch={~p"/tickets?page=#{max(@page - 1, 1)}"}
+        class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+      >
+        Previous
+      </.link>
+    </li>
+    <%= for page_num <- max(1, @page - 2)..min(@total_pages, @page + 2) do %>
+      <li>
+        <.link
+          patch={~p"/tickets?page=#{page_num}"}
+          class={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white #{if @page == page_num, do: "text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"}"}
+        >
+          <%= page_num %>
+        </.link>
+      </li>
+    <% end %>
+    <li>
+      <.link
+        patch={~p"/tickets?page=#{min(@page + 1, @total_pages)}"}
+        class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+      >
+        Next
+      </.link>
+    </li>
+  </ul>
+</nav>
