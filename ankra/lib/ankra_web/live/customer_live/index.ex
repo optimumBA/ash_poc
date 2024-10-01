@@ -92,12 +92,8 @@ defmodule AnkraWeb.CustomerLive.Index do
 
     {:ok,
      socket
+     |> stream(:customers, [], reset: true)
      |> assign(:filters, filters)
-     |> stream(
-       :customers,
-       Customers.list_customers!(filters, actor: socket.assigns[:current_user]),
-       reset: true
-     )
      |> assign_new(:current_user, fn -> nil end)}
   end
 
@@ -135,6 +131,11 @@ defmodule AnkraWeb.CustomerLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
+    |> stream(
+       :customers,
+       Customers.list_customers!(socket.assigns.filters, actor: socket.assigns[:current_user]),
+       reset: true
+     )
     |> assign(:page_title, "Listing Customers")
     |> assign(:customer, nil)
   end
@@ -144,7 +145,6 @@ defmodule AnkraWeb.CustomerLive.Index do
     {:noreply, stream_insert(socket, :customers, customer)}
   end
 
-  # Read on tenants
   @impl Phoenix.LiveView
   def handle_event("delete", %{"id" => id}, socket) do
     customer = Ash.get!(Ankra.Customers.Customer, id, actor: socket.assigns.current_user)
